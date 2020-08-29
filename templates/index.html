@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Index 
+{% endblock %} 
+
+{% block head %}
+    {{ super() }}
+
+    <style>
+        .flask-moment {
+            display:  inline !important;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}   
+    <h1>Hello, World!</h1>
+    <p>The local date and tim is {{ moment(current_time).format('LLLL') }}</p>
+    <p>That was {{ moment(current_time).fromNow(refresh=True) }}</p>
+
+{% endblock %}
