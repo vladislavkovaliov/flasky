@@ -1,16 +1,11 @@
-from flask import Flask, render_template, session, url_for
+from flask import Flask
 from flask_bootstrap import Bootstrap
-from flask_mail import Mail, Message
-from flask_migrate import Migrate, MigrateCommand
+from flask_mail import Mail
+from flask_migrate import Migrate
 from flask_moment import Moment
-from datetime import datetime
 
-from flask_script import Shell, Manager
+from flask_script import  Manager
 from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import FlaskForm
-from werkzeug.utils import redirect
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
 from config import config
 
 bootstrap = Bootstrap()
@@ -32,4 +27,7 @@ def create_app(config_name):
     db.init_app(app)
 
     # attach routes and custom error pages here
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+
     return app
