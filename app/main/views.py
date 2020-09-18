@@ -17,8 +17,8 @@ def index():
             form.validate_on_submit():
         post = Post(body=form.body.data,
                     author=current_user._get_current_object())
-        print(post)
-        # db.session.add(post)
+        db.session.add(post)
+        db.session.commit()
         return redirect(url_for('.index'))
     posts = Post.query.order_by(Post.timestamp.desc()).all()
     return render_template('index.html', form=form, posts=posts,
@@ -27,9 +27,11 @@ def index():
 
 @main.route('/user/<username>')
 def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    print(user.id)
-    return render_template('user.html', user=user)
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('user.html', user=user, posts=posts)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])

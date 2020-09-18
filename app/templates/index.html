@@ -12,4 +12,6 @@
     {{ wtf.quick_form(form) }}
     {% endif %}
 </div>
+<h3>Posts by {{ current_user.username }}</h3>
+{% include '_posts.html' %}
 {% endblock %}
