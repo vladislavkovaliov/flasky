@@ -1,26 +1,26 @@
 from flask import Blueprint
 from flask_login import login_required
 
-from ..decorators import admin_required
+from ..decorators import admin_required, permission_required
 from ..models import Permission
 
-main = Blueprint("main", __name__)
+main = Blueprint('main', __name__)
 
 from . import views, errors
 
 
-@main.route("/admin")
+@main.route('/admin')
 @login_required
 @admin_required
-def for_admins_only():
-    return "For administrators!"
+def for_admin_only():
+    return 'for admin only!'
 
 
-@main.route("/moderator")
+@main.route('/moderate')
 @login_required
-@admin_required
+@permission_required(Permission.MODERATE)
 def for_moderators_only():
-    return "For comment moderators!"
+    return 'for moderator only!'
 
 
 def inject_permissions():
