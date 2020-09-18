@@ -8,11 +8,11 @@
         src="{{ user.gravatar(size=256) }}"
     >
     <div class="profile-header">
-        <h1>Hello, {{ user.username }}</h1>
+        <h1>Hello, {{ user.name }}</h1>
         {% if user.username or user.location %}
             <p>
-                {% if user.username %}
-                    {{ user.username }}
+                {% if user.name %}
+                    {{ user.name }}
                 {% endif %}
 
                 {% if user.location %}
@@ -48,7 +48,6 @@
             {% endif %}
         </p>
     </div>
-    <h3>Posts by {{ current_user.usernamse }}</h3>
     {% include '_posts.html' %}
 </div>
 
