@@ -1,3 +1,4 @@
+import hashlib
 import unittest
 
 from app import create_app, db
@@ -20,25 +21,21 @@ class UserModelTestCase(unittest.TestCase):
 
     def test_password_setter(self):
         u = User(password='cat')
-
         self.assertTrue(u.password_hash is not None)
 
     def test_no_password_getter(self):
         u = User(password='cat')
-
         with self.assertRaises(AttributeError):
             u.password
 
     def test_password_verification(self):
         u = User(password='cat')
-
         self.assertTrue(u.verify_password('cat'))
         self.assertFalse(u.verify_password('dog'))
 
     def test_password_salts_are_random(self):
         u = User(password='cat')
         u2 = User(password='cat')
-
         self.assertTrue(u.password_hash != u2.password_hash)
 
     def test_roles_and_permissions(self):
@@ -57,3 +54,12 @@ class UserModelTestCase(unittest.TestCase):
         self.assertFalse(u.can(Permission.WRITE))
         self.assertFalse(u.can(Permission.MODERATE))
         self.assertFalse(u.can(Permission.ADMIN))
+
+    def test_is_administrator(self):
+        u = User(email='john@example', password='cat')
+        self.assertFalse(u.is_administrator())
+
+    def test_gravatar_hash(self):
+        u = User(email='john@example', password='cat')
+        self.assertEqual(u.gravatar_hash(), hashlib.md5(u.email.lower().encode('utf-8')).hexdigest())
+
