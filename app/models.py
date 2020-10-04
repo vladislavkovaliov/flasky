@@ -90,11 +90,11 @@ class User(UserMixin, db.Model):
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     followed = db.relationship('Follow', foreign_keys=[Follow.follower_id],
-                               backref=db.backref('followed', lazy='joined'),
-                               lazy='dynamic', cascade='all, delete-orphan')
-    follower = db.relationship('Follow', foreign_keys=[Follow.followed_id],
                                backref=db.backref('follower', lazy='joined'),
                                lazy='dynamic', cascade='all, delete-orphan')
+    followers = db.relationship('Follow', foreign_keys=[Follow.followed_id],
+                                backref=db.backref('followed', lazy='joined'),
+                                lazy='dynamic', cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -107,6 +107,7 @@ class User(UserMixin, db.Model):
             self.avatar_hash = hashlib.md5(
                 self.email.encode('utf-8')
             ).hexdigest()
+        self.follow(self)
 
     @property
     def password(self):
@@ -201,7 +202,21 @@ class User(UserMixin, db.Model):
     def is_followed_by(self, user):
         if user.id is None:
             return False
-        return self.follower.filter_by(follower_id=user.id).first() is not None
+        return self.followers.filter_by(follower_id=user.id).first() is not None
+
+    @property
+    def followed_posts(self):
+        return Post.query.join(Follow,
+                               Follow.followed_id == Post.author_id).filter(
+            Follow.follower_id == self.id)
+
+    @staticmethod
+    def add_self_follows():
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.add(user)
+                db.session.commit()
 
 
 class AnonymousUser(AnonymousUserMixin):
