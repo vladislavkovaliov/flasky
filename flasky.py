@@ -53,6 +53,7 @@ def test(coverage, test_names):
 
 @app.cli.command()
 def deploy():
+    print('42')
     """Run deployment tasks."""
     # migrate database to latest revision
     upgrade()
